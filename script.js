@@ -395,7 +395,8 @@ function createSound() {
       new Audio(`assets/sfx/${name}.mp3`),
     ]),
   );
-  music.preload = rain.preload = "none";
+  music.preload = "metadata";
+  rain.preload = "none";
   rain.loop = true;
   music.loop = true;
   const control = $("#sound");
@@ -405,21 +406,16 @@ function createSound() {
     [rain, 0.52],
     ...Object.values(effects).map((audio) => [audio, 0.64]),
   ];
-  let context;
-  let gain;
+  const caption = $("span:last-child", control);
   let enabled = false;
   let quiet = false;
   let scoreFinished = false;
 
-  function mix(fade = true) {
+  function mix() {
     const level = enabled && !quiet ? Number(volume.value) : 0;
-    if (gain) {
-      const now = context.currentTime;
-      gain.gain.cancelScheduledValues(now);
-      gain.gain.setTargetAtTime(level, now, fade ? 0.22 : 0.025);
-    } else {
-      for (const [audio, levelFactor] of volumes)
-        audio.volume = level * levelFactor;
+    for (const [audio, levelFactor] of volumes) {
+      audio.volume = level * levelFactor;
+      audio.muted = level === 0;
     }
     control.setAttribute("aria-pressed", String(enabled));
     control.setAttribute(
@@ -436,41 +432,39 @@ function createSound() {
       (audio === music && scoreFinished)
     )
       return;
-    audio.play().catch(() => {});
+    audio.play().catch((error) => {
+      if (
+        audio !== music ||
+        error.name === "AbortError" ||
+        !enabled ||
+        !music.paused
+      )
+        return;
+      setEnabled(false);
+      caption.textContent = "Включить звук";
+      control.title = "Браузер не запустил музыку. Нажмите, чтобы повторить.";
+      interacted = false;
+    });
   }
 
   function setEnabled(value) {
-    if (value && !context) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        context = new AudioContext();
-        gain = context.createGain();
-        gain.gain.value = 0;
-        gain.connect(context.destination);
-        for (const [audio, levelFactor] of volumes) {
-          const channel = context.createGain();
-          channel.gain.value = levelFactor;
-          context
-            .createMediaElementSource(audio)
-            .connect(channel)
-            .connect(gain);
-        }
-      }
-    }
     enabled = value;
+    caption.textContent = "Звук";
+    control.removeAttribute("title");
+    mix();
     if (enabled) {
-      context?.resume().catch(() => {});
+      if (navigator.audioSession) navigator.audioSession.type = "playback";
       play(music);
       play(rain);
+    } else {
+      for (const [audio] of volumes) audio.pause();
     }
-    mix();
   }
 
   function reset(at, loop) {
     scoreFinished = false;
-    music.pause();
-    music.currentTime = at;
     music.loop = loop;
+    if (music.currentTime !== at) music.currentTime = at;
     play(music);
   }
 
@@ -497,7 +491,7 @@ function createSound() {
     interacted = true;
     setEnabled(!enabled);
   });
-  volume.addEventListener("input", () => mix(false));
+  volume.addEventListener("input", mix);
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       for (const [audio] of volumes) audio.pause();
@@ -523,7 +517,7 @@ function createSound() {
     },
     quiet(value) {
       quiet = value;
-      mix(false);
+      mix();
       if (value) {
         for (const [audio] of volumes) audio.pause();
       } else {
