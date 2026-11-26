@@ -407,7 +407,8 @@ function createSound() {
     ...Object.values(effects).map((audio) => [audio, 0.64]),
   ];
   const caption = $("span:last-child", control);
-  let enabled = false;
+  let enabled = true;
+  let interacted = false;
   let quiet = false;
   let scoreFinished = false;
 
@@ -426,6 +427,7 @@ function createSound() {
 
   function play(audio) {
     if (
+      !interacted ||
       !enabled ||
       quiet ||
       document.hidden ||
@@ -443,7 +445,6 @@ function createSound() {
       setEnabled(false);
       caption.textContent = "Включить звук";
       control.title = "Браузер не запустил музыку. Нажмите, чтобы повторить.";
-      interacted = false;
     });
   }
 
@@ -468,8 +469,7 @@ function createSound() {
     play(music);
   }
 
-  control.setAttribute("aria-label", "Включить звук");
-  let interacted = false;
+  mix();
   const unlock = (event) => {
     if (
       interacted ||
@@ -483,7 +483,7 @@ function createSound() {
     )
       return;
     interacted = true;
-    setEnabled(true);
+    setEnabled(enabled);
   };
   document.addEventListener("click", unlock, true);
   document.addEventListener("keydown", unlock, true);
@@ -505,7 +505,7 @@ function createSound() {
     begin() {
       if (!interacted) {
         interacted = true;
-        setEnabled(true);
+        setEnabled(enabled);
       }
     },
     finish() {
