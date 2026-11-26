@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#030507" />
+    <meta name="description" content="Три буквы. Тысяча разбитых надежд." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Нет. — Искусство разочаровывать" />
+    <meta
+      property="og:description"
+      content="Три буквы. Тысяча разбитых надежд."
+    />
+    <meta property="og:url" content="https://troyanoff97.github.io/net/" />
+    <meta property="og:image" content="https://troyanoff97.github.io/net/assets/og-preview.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>Нет. — Искусство разочаровывать</title>
+    <link rel="icon" href="assets/favicon.svg" />
+    <link rel="preload" href="assets/hero-sad.webp" as="image" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <button
+        class="brand"
+        id="brand"
+        type="button"
+        aria-label="Нет. Искусство разочаровывать"
+      >
+        <span class="monogram">Н.</span
+        ><span class="wordmark">Искусство<br />разочаровывать</span>
+      </button>
+      <div class="header-right">
+        <div class="sound">
+          <button
+            class="sound-toggle"
+            id="sound"
+            aria-pressed="false"
+            type="button"
+          >
+            <span class="wave" aria-hidden="true"
+              ><i></i><i></i><i></i><i></i></span
+            ><span>Звук</span>
+          </button>
+          <input
+            id="volume"
+            type="range"
+            min="0"
+            max="1"
+            step=".01"
+            value=".65"
+            aria-label="Громкость"
+          />
+        </div>
+        <button
+          class="icon-button"
+          id="open-share"
+          type="button"
+          aria-label="Открыть генератор ссылок"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M9 15l6-6m-7 8-1 1a3.54 3.54 0 0 1-5-5l4-4a3.54 3.54 0 0 1 5 0m2 6a3.54 3.54 0 0 0 5 0l4-4a3.54 3.54 0 0 0-5-5l-1 1"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+    <main id="main">
+      <section class="hero" aria-labelledby="verdict">
+        <div class="portrait hero-portrait" aria-hidden="true"></div>
+        <div class="atmosphere" aria-hidden="true"></div>
+        <span class="ghost" aria-hidden="true">НЕТ.</span>
+        <div class="cutout hero-portrait" aria-hidden="true"></div>
+        <div class="shade" aria-hidden="true"></div>
+        <canvas id="rain" aria-hidden="true"></canvas>
+        <div class="grain" aria-hidden="true"></div>
+        <div class="hero-content">
+          <p class="badge">
+            <span></span>FINAL DECISION <b>·</b> HOPE NOT INCLUDED
+          </p>
+          <h1 id="verdict">
+            <button
+              id="hold"
+              type="button"
+              aria-label="Нет. Удерживайте, чтобы усилить дождь"
+            >
+              Нет<span>.</span>
+            </button>
+          </h1>
+          <p class="tagline" id="tagline">
+            Три буквы.<br />Тысяча разбитых надежд.
+          </p>
+          <p class="subline">Некоторые ответы меняют всё.</p>
+          <div class="actions hero-actions">
+            <button class="primary" id="start" type="button">
+              <span class="play-icon" aria-hidden="true"></span>Принять
+              неизбежное
+            </button>
+            <button class="secondary retry" type="button">
+              А может, всё-таки да?
+            </button>
+          </div>
+        </div>
+        <footer class="hero-footer">
+          <span>Designed in Kazakhstan.</span>
+          <a href="#manual" id="manual-link"
+            ><span class="scroll-mark" aria-hidden="true"></span>Смотреть
+            вручную</a
+          >
+          <span>Engineered to disappoint.</span>
+        </footer>
+      </section>
+      <div id="manual" aria-label="Ручной просмотр"></div>
+    </main>
+    <section
+      class="film"
+      id="film"
+      aria-label="Кинематографический отказ"
+      hidden
+    >
+      <div class="film-backdrop" aria-hidden="true"></div>
+      <div class="film-light" aria-hidden="true"></div>
+      <div class="film-crack crack" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="film-top">
+        <span id="chapter"></span
+        ><button class="secondary" id="skip" type="button">Пропустить</button>
+      </div>
+      <div class="film-content" id="film-content" tabindex="-1"></div>
+      <div class="film-bottom">
+        <progress
+          id="progress"
+          value="0"
+          max="42"
+          aria-label="Прогресс принятия неизбежного"
+        ></progress
+        ><span id="remaining">0:42</span>
+      </div>
+    </section>
+    <dialog id="notice" aria-labelledby="notice-title">
+      <div class="dialog-bar">
+        <button class="close" type="button" data-close aria-label="Закрыть">
+          ×
+        </button>
+      </div>
+      <div id="notice-content" aria-live="polite"></div>
+    </dialog>
+    <dialog id="share-box" aria-labelledby="share-title">
+      <div class="dialog-bar">
+        <button class="close" type="button" data-close aria-label="Закрыть">
+          ×
+        </button>
+      </div>
+      <h2 id="share-title">Поделиться разочарованием</h2>
+      <label for="question">Ваш вопрос</label>
+      <textarea id="question" rows="2" placeholder="Ты согласен?"></textarea>
+      <label for="generated">Ссылка на отказ</label>
+      <input id="generated" type="url" readonly />
+      <div class="actions">
+        <button class="primary" id="copy" type="button">Скопировать</button
+        ><button class="secondary" id="share" type="button">Поделиться</button>
+      </div>
+      <p id="share-status" role="status"></p>
+    </dialog>
+  </body>
+</html>
